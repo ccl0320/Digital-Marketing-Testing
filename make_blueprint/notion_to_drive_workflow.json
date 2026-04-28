@@ -155,10 +155,11 @@
       "version": 1,
       "parameters": {
         "rowSeparator": "other",
-        "otherRowSeparator": "\n"
+        "otherRowSeparator": "\n",
+        "sourcemodule": 3
       },
       "mapper": {
-        "value": "{{ifempty(3.paragraph.rich_text[].plain_text, ifempty(3.heading_1.rich_text[].plain_text, ifempty(3.heading_2.rich_text[].plain_text, ifempty(3.heading_3.rich_text[].plain_text, ifempty(3.bulleted_list_item.rich_text[].plain_text, ifempty(3.numbered_list_item.rich_text[].plain_text, ifempty(3.to_do.rich_text[].plain_text, \"\")))))))}}"
+        "value": "{{if(3.type = \"paragraph\"; join(map(3.paragraph.rich_text; \"plain_text\"); \"\"); if(3.type = \"heading_1\"; \"# \" + join(map(3.heading_1.rich_text; \"plain_text\"); \"\"); if(3.type = \"heading_2\"; \"## \" + join(map(3.heading_2.rich_text; \"plain_text\"); \"\"); if(3.type = \"heading_3\"; \"### \" + join(map(3.heading_3.rich_text; \"plain_text\"); \"\"); if(3.type = \"bulleted_list_item\"; \"• \" + join(map(3.bulleted_list_item.rich_text; \"plain_text\"); \"\"); if(3.type = \"numbered_list_item\"; \"- \" + join(map(3.numbered_list_item.rich_text; \"plain_text\"); \"\"); if(3.type = \"to_do\"; if(3.to_do.checked; \"☑ \"; \"☐ \") + join(map(3.to_do.rich_text; \"plain_text\"); \"\"); \"\")))))))}}"
       },
       "metadata": {
         "designer": {
@@ -177,6 +178,12 @@
             "name": "rowSeparator",
             "type": "select",
             "label": "Row separator",
+            "required": true
+          },
+          {
+            "name": "sourcemodule",
+            "type": "uinteger",
+            "label": "Source Module",
             "required": true
           }
         ],

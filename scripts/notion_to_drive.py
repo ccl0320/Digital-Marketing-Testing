@@ -14,7 +14,6 @@ import json
 import base64
 import logging
 import argparse
-from datetime import datetime, timezone, timedelta
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
@@ -99,49 +98,59 @@ def fetch_new_notion_pages(notion: NotionClient, processed_ids: set) -> list:
 
 
 def extract_page_content(notion: NotionClient, page_id: str) -> tuple[str, str]:
-    """提取 Notion 頁面標題與內文"""
+    """提取 Notion 頁面標題與內文（支援分頁，處理超過 100 個 block）"""
     page = notion.pages.retrieve(page_id=page_id)
 
     title = ""
-    for prop_name, prop_value in page["properties"].items():
+    for prop_value in page["properties"].values():
         if prop_value["type"] == "title":
-            title_parts = prop_value["title"]
-            title = "".join(t["plain_text"] for t in title_parts)
+            title = "".join(t["plain_text"] for t in prop_value["title"])
             break
 
-    blocks = notion.blocks.children.list(block_id=page_id)
     content_parts = []
+    cursor = None
 
-    for block in blocks["results"]:
-        block_type = block["type"]
-        block_data = block.get(block_type, {})
-        rich_text = block_data.get("rich_text", [])
-        text = "".join(t["plain_text"] for t in rich_text)
+    while True:
+        kwargs = {"block_id": page_id, "page_size": 100}
+        if cursor:
+            kwargs["start_cursor"] = cursor
 
-        if not text:
-            continue
+        blocks = notion.blocks.children.list(**kwargs)
 
-        if block_type == "heading_1":
-            content_parts.append(f"# {text}")
-        elif block_type == "heading_2":
-            content_parts.append(f"## {text}")
-        elif block_type == "heading_3":
-            content_parts.append(f"### {text}")
-        elif block_type == "bulleted_list_item":
-            content_parts.append(f"• {text}")
-        elif block_type == "numbered_list_item":
-            content_parts.append(f"- {text}")
-        elif block_type == "to_do":
-            checked = block_data.get("checked", False)
-            checkbox = "☑" if checked else "☐"
-            content_parts.append(f"{checkbox} {text}")
-        elif block_type == "quote":
-            content_parts.append(f"> {text}")
-        elif block_type == "callout":
-            emoji = block_data.get("icon", {}).get("emoji", "📌")
-            content_parts.append(f"{emoji} {text}")
-        else:
-            content_parts.append(text)
+        for block in blocks["results"]:
+            block_type = block["type"]
+            block_data = block.get(block_type, {})
+            rich_text = block_data.get("rich_text", [])
+            text = "".join(t["plain_text"] for t in rich_text)
+
+            if not text:
+                continue
+
+            if block_type == "heading_1":
+                content_parts.append(f"# {text}")
+            elif block_type == "heading_2":
+                content_parts.append(f"## {text}")
+            elif block_type == "heading_3":
+                content_parts.append(f"### {text}")
+            elif block_type == "bulleted_list_item":
+                content_parts.append(f"• {text}")
+            elif block_type == "numbered_list_item":
+                content_parts.append(f"- {text}")
+            elif block_type == "to_do":
+                checked = block_data.get("checked", False)
+                checkbox = "☑" if checked else "☐"
+                content_parts.append(f"{checkbox} {text}")
+            elif block_type == "quote":
+                content_parts.append(f"> {text}")
+            elif block_type == "callout":
+                emoji = block_data.get("icon", {}).get("emoji", "📌")
+                content_parts.append(f"{emoji} {text}")
+            else:
+                content_parts.append(text)
+
+        if not blocks.get("has_more"):
+            break
+        cursor = blocks["next_cursor"]
 
     return title, "\n".join(content_parts)
 
@@ -330,13 +339,16 @@ def process_page(notion: NotionClient, creds: Credentials, page: dict):
     title, content = extract_page_content(notion, page_id)
     if not content.strip():
         logger.warning(f"頁面 {page_id} 內容為空，跳過")
+        save_processed_id(page_id)
         return
 
     summary = summarize_with_claude(content, title)
-    doc_id, doc_link = create_google_doc(
+    _, doc_link = create_google_doc(
         creds, title, content, summary, notion_url, created_time
     )
     send_gmail_notification(creds, title, doc_link, notion_url, created_time, summary)
+
+    # 只有全部步驟成功才標記為已處理
     save_processed_id(page_id)
 
     logger.info(f"✅ 完成處理：{title}")

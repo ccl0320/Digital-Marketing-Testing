@@ -86,13 +86,23 @@ cp .env.example .env
 
 1. 前往 [Google Cloud Console](https://console.cloud.google.com/)
 2. 建立專案 → 啟用 Google Docs API、Google Drive API、Gmail API
-3. 建立 OAuth 2.0 用戶端憑證（類型：桌面應用程式）
+3. 建立 OAuth 2.0 用戶端憑證（類型：**桌面應用程式**）
 4. 下載 JSON 檔案，儲存為 `scripts/credentials.json`
+
+> ⚠️  `credentials.json` 和 `token.json` 已加入 `.gitignore`，不會被推上 GitHub
+
+### 首次授權（只需執行一次）
+
+```bash
+cd scripts
+python setup_google_auth.py
+# 瀏覽器自動開啟 → 以 ccl0320@gmail.com 登入並授權 → 產生 token.json
+```
 
 ### 執行
 
 ```bash
-# 處理所有新紀錄（執行一次）
+# 處理所有未處理的新紀錄（執行一次）
 python notion_to_drive.py
 
 # 只處理最新一筆
@@ -150,11 +160,13 @@ Notion 來源：[連結]
 ## 檔案說明
 
 ```
+├── .gitignore                          # 防止敏感檔案被推上 GitHub
 ├── make_blueprint/
 │   └── notion_to_drive_workflow.json   # Make.com 可匯入的 Blueprint
 ├── scripts/
-│   ├── notion_to_drive.py              # Python 自動化腳本
+│   ├── notion_to_drive.py              # Python 自動化主腳本
+│   ├── setup_google_auth.py            # Google OAuth 首次授權輔助腳本
 │   ├── requirements.txt                # Python 套件依賴
-│   └── .env.example                    # 環境變數範本
+│   └── .env.example                    # 環境變數範本（複製為 .env 後填入）
 └── README.md
 ```

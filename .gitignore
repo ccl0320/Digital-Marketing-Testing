@@ -1,0 +1,22 @@
+# 敏感憑證（絕對不可 commit）
+.env
+credentials.json
+token.json
+
+# 工作流程狀態檔（本機專用）
+scripts/.processed_ids.json
+.processed_ids.json
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+dist/
+build/
+
+# 系統
+.DS_Store
+Thumbs.db
+*.log
