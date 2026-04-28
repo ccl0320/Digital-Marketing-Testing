@@ -1,0 +1,465 @@
+{
+  "name": "Notion AI會議紀錄 → Google Drive + Gmail通知",
+  "flow": [
+    {
+      "id": 1,
+      "module": "notion:WatchDatabaseItems",
+      "version": 1,
+      "parameters": {
+        "__IMTCONN__": {
+          "data": {
+            "scoped": "true",
+            "connection": "notion"
+          },
+          "label": "Notion Connection"
+        }
+      },
+      "filter": {
+        "name": "Only AI Meeting Records",
+        "conditions": [
+          [
+            {
+              "a": "{{1.properties.Type.select.name}}",
+              "b": "AI會議紀錄",
+              "o": "text:equal"
+            }
+          ]
+        ]
+      },
+      "mapper": {
+        "databaseId": "{{YOUR_NOTION_DATABASE_ID}}",
+        "filter": {},
+        "sorts": [
+          {
+            "timestamp": "created_time",
+            "direction": "descending"
+          }
+        ]
+      },
+      "metadata": {
+        "designer": {
+          "x": 0,
+          "y": 0
+        },
+        "restore": {
+          "expect": {
+            "filter": {
+              "mode": "chose"
+            },
+            "sorts": {
+              "mode": "chose"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "__IMTCONN__",
+            "type": "account:notion",
+            "label": "Connection",
+            "required": true
+          }
+        ],
+        "expect": [
+          {
+            "name": "databaseId",
+            "type": "text",
+            "label": "Database ID",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "id": 2,
+      "module": "notion:GetPage",
+      "version": 1,
+      "parameters": {
+        "__IMTCONN__": {
+          "data": {
+            "scoped": "true",
+            "connection": "notion"
+          },
+          "label": "Notion Connection"
+        }
+      },
+      "mapper": {
+        "pageId": "{{1.id}}"
+      },
+      "metadata": {
+        "designer": {
+          "x": 300,
+          "y": 0
+        },
+        "restore": {},
+        "parameters": [
+          {
+            "name": "__IMTCONN__",
+            "type": "account:notion",
+            "label": "Connection",
+            "required": true
+          }
+        ],
+        "expect": [
+          {
+            "name": "pageId",
+            "type": "text",
+            "label": "Page ID",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "id": 3,
+      "module": "notion:GetBlockChildren",
+      "version": 1,
+      "parameters": {
+        "__IMTCONN__": {
+          "data": {
+            "scoped": "true",
+            "connection": "notion"
+          },
+          "label": "Notion Connection"
+        }
+      },
+      "mapper": {
+        "blockId": "{{1.id}}"
+      },
+      "metadata": {
+        "designer": {
+          "x": 600,
+          "y": 0
+        },
+        "restore": {},
+        "parameters": [
+          {
+            "name": "__IMTCONN__",
+            "type": "account:notion",
+            "label": "Connection",
+            "required": true
+          }
+        ],
+        "expect": [
+          {
+            "name": "blockId",
+            "type": "text",
+            "label": "Block ID",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "id": 4,
+      "module": "util:TextAggregator",
+      "version": 1,
+      "parameters": {
+        "rowSeparator": "other",
+        "otherRowSeparator": "\n"
+      },
+      "mapper": {
+        "value": "{{ifempty(3.paragraph.rich_text[].plain_text, ifempty(3.heading_1.rich_text[].plain_text, ifempty(3.heading_2.rich_text[].plain_text, ifempty(3.heading_3.rich_text[].plain_text, ifempty(3.bulleted_list_item.rich_text[].plain_text, ifempty(3.numbered_list_item.rich_text[].plain_text, ifempty(3.to_do.rich_text[].plain_text, \"\")))))))}}"
+      },
+      "metadata": {
+        "designer": {
+          "x": 900,
+          "y": 0
+        },
+        "restore": {
+          "parameters": {
+            "rowSeparator": {
+              "label": "Other"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "rowSeparator",
+            "type": "select",
+            "label": "Row separator",
+            "required": true
+          }
+        ],
+        "expect": [
+          {
+            "name": "value",
+            "type": "text",
+            "label": "Text"
+          }
+        ]
+      }
+    },
+    {
+      "id": 5,
+      "module": "http:ActionSendData",
+      "version": 3,
+      "parameters": {
+        "handleErrors": true,
+        "useNewZLibDecompression": true
+      },
+      "mapper": {
+        "url": "https://api.anthropic.com/v1/messages",
+        "serializeUrl": false,
+        "method": "post",
+        "headers": [
+          {
+            "name": "x-api-key",
+            "value": "{{YOUR_ANTHROPIC_API_KEY}}"
+          },
+          {
+            "name": "anthropic-version",
+            "value": "2023-06-01"
+          },
+          {
+            "name": "content-type",
+            "value": "application/json"
+          }
+        ],
+        "qs": [],
+        "bodyType": "raw",
+        "parseResponse": true,
+        "authUser": "",
+        "authPass": "",
+        "timeout": 60,
+        "shareCookies": false,
+        "ca": "",
+        "rejectUnauthorized": true,
+        "followRedirect": true,
+        "useQuerystring": false,
+        "gzip": true,
+        "useMtls": false,
+        "contentType": "application/json",
+        "data": "{\"model\": \"claude-sonnet-4-6\", \"max_tokens\": 2048, \"messages\": [{\"role\": \"user\", \"content\": \"請將以下AI會議紀錄進行結構化總結。請包含：\\n1. 會議主題\\n2. 主要討論重點（條列式）\\n3. 重要決策\\n4. 待辦事項與負責人\\n5. 下次會議重點\\n\\n會議紀錄內容：\\n{{4.text}}\"}]}"
+      },
+      "metadata": {
+        "designer": {
+          "x": 1200,
+          "y": 0
+        },
+        "restore": {
+          "parameters": {
+            "handleErrors": {
+              "label": "Yes"
+            }
+          },
+          "expect": {
+            "method": {
+              "mode": "chose",
+              "label": "POST"
+            },
+            "bodyType": {
+              "label": "Raw"
+            },
+            "contentType": {
+              "label": "JSON (application/json)"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "handleErrors",
+            "type": "boolean",
+            "label": "Evaluate all states as errors (except for 2xx and 3xx)",
+            "required": true
+          }
+        ],
+        "expect": [
+          {
+            "name": "url",
+            "type": "url",
+            "label": "URL",
+            "required": true
+          },
+          {
+            "name": "method",
+            "type": "select",
+            "label": "Method",
+            "required": true
+          },
+          {
+            "name": "headers",
+            "spec": [
+              {
+                "name": "name",
+                "type": "text",
+                "label": "Name"
+              },
+              {
+                "name": "value",
+                "type": "text",
+                "label": "Value"
+              }
+            ],
+            "type": "array",
+            "label": "Headers"
+          },
+          {
+            "name": "data",
+            "type": "text",
+            "label": "Request content"
+          }
+        ]
+      }
+    },
+    {
+      "id": 6,
+      "module": "googledocs:CreateDocument",
+      "version": 1,
+      "parameters": {
+        "__IMTCONN__": {
+          "data": {
+            "scoped": "true",
+            "connection": "google"
+          },
+          "label": "Google Connection"
+        }
+      },
+      "mapper": {
+        "title": "AI會議紀錄 - {{formatDate(1.created_time, 'YYYY-MM-DD')}} - {{1.properties.Name.title[].plain_text}}",
+        "folderId": "{{YOUR_GOOGLE_DRIVE_FOLDER_ID}}",
+        "content": "# AI會議紀錄\n\n**會議標題：** {{1.properties.Name.title[].plain_text}}\n**建立時間：** {{formatDate(1.created_time, 'YYYY年MM月DD日 HH:mm')}}\n**Notion 頁面連結：** {{1.url}}\n\n---\n\n## 📋 原始紀錄\n\n{{4.text}}\n\n---\n\n## 🤖 AI 總結\n\n{{5.data.content[].text}}"
+      },
+      "metadata": {
+        "designer": {
+          "x": 1500,
+          "y": 0
+        },
+        "restore": {
+          "parameters": {
+            "__IMTCONN__": {
+              "data": {
+                "scoped": "true",
+                "connection": "google"
+              },
+              "label": "Google Connection"
+            }
+          },
+          "expect": {
+            "folderId": {
+              "mode": "chose"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "__IMTCONN__",
+            "type": "account:google",
+            "label": "Connection",
+            "required": true
+          }
+        ],
+        "expect": [
+          {
+            "name": "title",
+            "type": "text",
+            "label": "Document Title",
+            "required": true
+          },
+          {
+            "name": "folderId",
+            "type": "text",
+            "label": "New Document's Location"
+          },
+          {
+            "name": "content",
+            "type": "text",
+            "label": "Content"
+          }
+        ]
+      }
+    },
+    {
+      "id": 7,
+      "module": "gmail:SendAnEmail",
+      "version": 1,
+      "parameters": {
+        "__IMTCONN__": {
+          "data": {
+            "scoped": "true",
+            "connection": "google"
+          },
+          "label": "Gmail Connection"
+        }
+      },
+      "mapper": {
+        "to": "ccl0320@gmail.com",
+        "subject": "📋 新AI會議紀錄 - {{1.properties.Name.title[].plain_text}} ({{formatDate(1.created_time, 'YYYY-MM-DD')}})",
+        "html": true,
+        "content": "<h2>📋 新的 AI 會議紀錄已自動儲存</h2><p>您好，</p><p>一份新的 AI 會議紀錄已成功從 Notion 同步並儲存至 Google Drive。</p><table border='0' cellpadding='8' cellspacing='0' style='background-color:#f5f5f5;border-radius:8px;'><tr><td><strong>📌 會議標題</strong></td><td>{{1.properties.Name.title[].plain_text}}</td></tr><tr><td><strong>📅 建立時間</strong></td><td>{{formatDate(1.created_time, 'YYYY年MM月DD日 HH:mm')}}</td></tr><tr><td><strong>🔗 Notion 來源</strong></td><td><a href='{{1.url}}'>點擊查看原始紀錄</a></td></tr><tr><td><strong>📄 Google Doc</strong></td><td><a href='https://docs.google.com/document/d/{{6.documentId}}/edit'>點擊開啟文件</a></td></tr></table><br/><h3>🤖 AI 總結預覽</h3><div style='background-color:#e8f4f8;padding:12px;border-left:4px solid #2196F3;border-radius:4px;'>{{5.data.content[].text}}</div><br/><p style='color:#888;font-size:12px;'>此郵件由自動化工作流程發送 (Make.com)</p>",
+        "attachments": []
+      },
+      "metadata": {
+        "designer": {
+          "x": 1800,
+          "y": 0
+        },
+        "restore": {
+          "parameters": {
+            "__IMTCONN__": {
+              "data": {
+                "scoped": "true",
+                "connection": "google"
+              },
+              "label": "Gmail Connection"
+            }
+          },
+          "expect": {
+            "html": {
+              "label": "Yes"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "__IMTCONN__",
+            "type": "account:google",
+            "label": "Connection",
+            "required": true
+          }
+        ],
+        "expect": [
+          {
+            "name": "to",
+            "type": "email",
+            "label": "To",
+            "required": true
+          },
+          {
+            "name": "subject",
+            "type": "text",
+            "label": "Subject"
+          },
+          {
+            "name": "content",
+            "type": "text",
+            "label": "Content"
+          },
+          {
+            "name": "html",
+            "type": "boolean",
+            "label": "Content is HTML"
+          }
+        ]
+      }
+    }
+  ],
+  "metadata": {
+    "instant": false,
+    "version": 1,
+    "scenario": {
+      "roundtrips": 1,
+      "maxErrors": 3,
+      "autoCommit": true,
+      "autoCommitTriggerLast": true,
+      "sequential": false,
+      "confidential": false,
+      "dataloss": false,
+      "dlq": false,
+      "freshVariables": false
+    },
+    "designer": {
+      "orphans": []
+    },
+    "zone": "eu2.make.com"
+  }
+}
