@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">名片管理</string>
+    <string name="scan_card">掃描名片</string>
+    <string name="scan_title">掃描名片</string>
+    <string name="scan_hint">將名片對準框內，保持清晰後拍照</string>
+    <string name="gallery">相簿</string>
+    <string name="flash">閃光燈</string>
+    <string name="close">關閉</string>
+    <string name="save">儲存</string>
+    <string name="favorite">收藏</string>
+    <string name="settings">設定</string>
+    <string name="refresh">重新搜尋</string>
+    <string name="search_hint">搜尋姓名、公司、電話…</string>
+
+    <!-- 空狀態 -->
+    <string name="empty_cards">尚無名片</string>
+    <string name="empty_cards_hint">點擊下方按鈕掃描你的第一張名片</string>
+
+    <!-- 名片詳情 -->
+    <string name="hint_name">姓名</string>
+    <string name="hint_title">職稱</string>
+    <string name="hint_company">公司</string>
+    <string name="hint_phone">電話</string>
+    <string name="hint_mobile">手機</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_website">網站</string>
+    <string name="hint_address">地址</string>
+    <string name="hint_tags">標籤（用逗號分隔）</string>
+    <string name="tags_title">備註與標籤</string>
+
+    <!-- 公司資訊 -->
+    <string name="company_info_title">🔍 公司資訊摘要</string>
+    <string name="no_company_info">點擊「重新搜尋」取得公司資訊</string>
+
+    <!-- 設定 -->
+    <string name="api_settings">Gemini API 設定</string>
+    <string name="api_key_description">請至 Google AI Studio (aistudio.google.com) 取得免費 API Key，用於名片辨識及公司資訊搜尋。</string>
+    <string name="hint_api_key">貼上你的 Gemini API Key</string>
+    <string name="save_api_key">儲存 API Key</string>
+    <string name="test_api_key">測試連線</string>
+    <string name="how_to_get_api_key">如何取得 API Key？</string>
+    <string name="api_key_steps">1. 開啟瀏覽器前往 aistudio.google.com\n2. 使用 Google 帳號登入\n3. 點擊左側「Get API key」\n4. 點擊「Create API key」\n5. 複製產生的 API Key\n6. 貼入上方欄位並儲存</string>
+    <string name="version_info">名片管理 App v1.0 · Powered by Gemini AI</string>
+
+    <!-- 狀態訊息 -->
+    <string name="analyzing">AI 正在分析名片…</string>
+    <string name="fetching_company">正在搜尋公司資訊…</string>
+    <string name="saved_success">名片已儲存</string>
+    <string name="deleted_success">名片已刪除</string>
+    <string name="api_key_saved">API Key 已儲存</string>
+    <string name="api_test_success">✅ 連線成功！API Key 有效</string>
+    <string name="api_test_fail">❌ 連線失敗，請確認 API Key 是否正確</string>
+    <string name="permission_required">需要相機權限才能掃描名片</string>
+    <string name="delete_confirm">確定要刪除這張名片嗎？</string>
+    <string name="confirm">確定</string>
+    <string name="cancel">取消</string>
+    <string name="edit">編輯</string>
+    <string name="delete">刪除</string>
+    <string name="total_cards">共 %d 張名片</string>
+</resources>

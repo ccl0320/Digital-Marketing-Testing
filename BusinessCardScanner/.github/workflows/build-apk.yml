@@ -1,0 +1,59 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ main, 'claude/**' ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v2
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x BusinessCardScanner/gradlew
+
+      - name: Build Debug APK
+        working-directory: BusinessCardScanner
+        run: ./gradlew assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: business-card-scanner-debug
+          path: BusinessCardScanner/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 30
+
+      - name: Create Release
+        if: github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ github.run_number }}
+          name: "名片管理 App v${{ github.run_number }}"
+          body: |
+            ## 名片管理 App
+
+            ### 安裝方式
+            1. 下載下方的 `app-debug.apk`
+            2. 在 Android 手機上開啟（需允許安裝未知來源）
+            3. 開啟 App → 設定 → 輸入 Gemini API Key
+
+            ### 取得 API Key
+            前往 https://aistudio.google.com 免費申請
+          files: |
+            BusinessCardScanner/app/build/outputs/apk/debug/app-debug.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
