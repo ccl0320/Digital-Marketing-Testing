@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bosch 洗碗機 — 德國精工，靜音革命</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;500;600;700&family=Rubik:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary:   '#1C1917',
+            secondary: '#44403C',
+            cta:       '#CA8A04',
+            surface:   '#FAFAF9',
+            textMain:  '#0C0A09',
+          },
+          fontFamily: {
+            heading: ['Rubik', 'sans-serif'],
+            body:    ['Nunito Sans', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    .glass {
+      background: rgba(255,255,255,0.55);
+      backdrop-filter: blur(18px) saturate(180%);
+      -webkit-backdrop-filter: blur(18px) saturate(180%);
+      border: 1px solid rgba(255,255,255,0.6);
+    }
+    .glass-dark {
+      background: rgba(28,25,23,0.72);
+      backdrop-filter: blur(20px) saturate(160%);
+      -webkit-backdrop-filter: blur(20px) saturate(160%);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .iridescent {
+      background: linear-gradient(135deg,
+        rgba(202,138,4,0.15) 0%,
+        rgba(255,255,255,0.05) 40%,
+        rgba(202,138,4,0.1) 100%);
+    }
+    .fluid-gradient {
+      background: radial-gradient(ellipse 80% 60% at 50% 0%,
+        rgba(202,138,4,0.18) 0%,
+        rgba(28,25,23,0.04) 60%,
+        transparent 100%),
+        #FAFAF9;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+  </style>
+</head>
+<body class="font-body text-textMain bg-surface overflow-x-hidden">
+
+  <!-- Floating Navbar -->
+  <nav class="fixed top-4 left-4 right-4 z-50 glass rounded-2xl px-6 py-3 flex items-center justify-between shadow-lg transition-all duration-300" aria-label="主選單">
+    <a href="#" class="flex items-center gap-2 cursor-pointer" aria-label="Bosch 首頁">
+      <svg viewBox="0 0 48 18" width="72" height="27" aria-hidden="true" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <text x="0" y="15" font-family="Rubik,sans-serif" font-weight="700" font-size="18" fill="#1C1917" letter-spacing="2">BOSCH</text>
+      </svg>
+    </a>
+    <ul class="hidden md:flex items-center gap-8 text-sm font-semibold text-secondary" role="list">
+      <li><a href="#features" class="hover:text-primary transition-colors duration-200 cursor-pointer">功能特色</a></li>
+      <li><a href="#specs" class="hover:text-primary transition-colors duration-200 cursor-pointer">規格比較</a></li>
+      <li><a href="#reviews" class="hover:text-primary transition-colors duration-200 cursor-pointer">用戶評價</a></li>
+    </ul>
+    <a href="#buy" class="bg-cta text-white text-sm font-semibold px-5 py-2 rounded-xl hover:bg-yellow-600 transition-colors duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-cta focus:ring-offset-2">立即購買</a>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="fluid-gradient min-h-screen flex flex-col items-center justify-center text-center px-4 pt-24 pb-16">
+    <span class="inline-block text-xs font-semibold tracking-widest text-cta uppercase mb-4 glass px-4 py-1.5 rounded-full">德國工藝 · 靜音革命</span>
+    <h1 class="font-heading font-700 text-5xl md:text-7xl leading-tight text-primary max-w-3xl mx-auto mb-6">
+      靜音到你<br class="hidden md:block"/>幾乎忘了它的存在
+    </h1>
+    <p class="text-secondary text-lg md:text-xl leading-relaxed max-w-xl mx-auto mb-10">
+      Bosch Series 8 洗碗機，42 dB 超靜音技術，PerfectDry™ 烘乾系統，讓廚房在最安靜的時刻完成最繁重的工作。
+    </p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+      <a href="#buy" class="bg-primary text-white font-semibold px-8 py-4 rounded-2xl hover:bg-secondary transition-colors duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 shadow-lg">立即選購</a>
+      <a href="#features" class="glass border border-primary/20 text-primary font-semibold px-8 py-4 rounded-2xl hover:border-primary/50 transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">了解更多</a>
+    </div>
+    <div class="relative w-full max-w-2xl mx-auto">
+      <div class="iridescent rounded-3xl overflow-hidden shadow-2xl border border-white/60 p-8 md:p-16 flex items-center justify-center" style="min-height:320px;">
+        <svg viewBox="0 0 320 240" width="100%" height="auto" aria-label="Bosch 洗碗機產品示意圖" role="img" xmlns="http://www.w3.org/2000/svg">
+          <rect x="40" y="20" width="240" height="200" rx="12" fill="#E7E5E4" stroke="#D6D3D1" stroke-width="2"/>
+          <rect x="55" y="35" width="210" height="150" rx="8" fill="#FAFAF9" stroke="#E7E5E4" stroke-width="1.5"/>
+          <rect x="55" y="35" width="210" height="36" rx="8" fill="#1C1917"/>
+          <circle cx="90" cy="53" r="6" fill="#CA8A04"/>
+          <circle cx="115" cy="53" r="6" fill="#44403C"/>
+          <circle cx="140" cy="53" r="6" fill="#44403C"/>
+          <circle cx="165" cy="53" r="6" fill="#44403C"/>
+          <rect x="190" y="44" width="60" height="18" rx="4" fill="#CA8A04" opacity="0.85"/>
+          <text x="220" y="57" text-anchor="middle" font-family="Rubik,sans-serif" font-size="9" font-weight="600" fill="#1C1917">42 dB</text>
+          <rect x="110" y="175" width="100" height="8" rx="4" fill="#9CA3AF"/>
+          <line x1="75" y1="110" x2="245" y2="110" stroke="#E7E5E4" stroke-width="2"/>
+          <line x1="75" y1="130" x2="245" y2="130" stroke="#E7E5E4" stroke-width="1.5" stroke-dasharray="6,4"/>
+          <text x="160" y="165" text-anchor="middle" font-family="Rubik,sans-serif" font-size="13" font-weight="700" fill="#D6D3D1" letter-spacing="3">BOSCH</text>
+          <rect x="40" y="210" width="240" height="10" rx="0" fill="#D6D3D1"/>
+        </svg>
+      </div>
+      <div class="absolute -bottom-4 left-1/2 -translate-x-1/2 glass px-6 py-2 rounded-full shadow text-sm font-semibold text-primary whitespace-nowrap">Series 8 — SMV8YCX03E</div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features" class="py-24 px-4 bg-white">
+    <div class="max-w-6xl mx-auto">
+      <h2 class="font-heading font-700 text-4xl md:text-5xl text-center text-primary mb-4">為什麼選擇 Bosch？</h2>
+      <p class="text-secondary text-lg text-center max-w-xl mx-auto mb-16">每一項技術都是為了讓你的生活更從容。</p>
+      <div class="grid md:grid-cols-3 gap-8">
+        <article class="group p-8 rounded-3xl border border-gray-100 hover:border-cta/30 hover:shadow-xl transition-all duration-300 cursor-pointer">
+          <div class="w-14 h-14 rounded-2xl bg-cta/10 flex items-center justify-center mb-6 group-hover:bg-cta/20 transition-colors duration-200">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="#CA8A04" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+          </div>
+          <h3 class="font-heading font-600 text-xl text-primary mb-3">42 dB 超靜音</h3>
+          <p class="text-secondary leading-relaxed">業界最低噪音等級之一，圖書館的安靜，洗碗機的效率。即使在夜間運轉，也不打擾任何人的睡眠。</p>
+        </article>
+        <article class="group p-8 rounded-3xl border border-gray-100 hover:border-cta/30 hover:shadow-xl transition-all duration-300 cursor-pointer">
+          <div class="w-14 h-14 rounded-2xl bg-cta/10 flex items-center justify-center mb-6 group-hover:bg-cta/20 transition-colors duration-200">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="#CA8A04" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+          </div>
+          <h3 class="font-heading font-600 text-xl text-primary mb-3">PerfectDry™ 烘乾</h3>
+          <p class="text-secondary leading-relaxed">採用沸石礦物乾燥技術，連玻璃杯內壁也能全乾，無需二次擦拭。節能 20% 同時效果更佳。</p>
+        </article>
+        <article class="group p-8 rounded-3xl border border-gray-100 hover:border-cta/30 hover:shadow-xl transition-all duration-300 cursor-pointer">
+          <div class="w-14 h-14 rounded-2xl bg-cta/10 flex items-center justify-center mb-6 group-hover:bg-cta/20 transition-colors duration-200">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="#CA8A04" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          </div>
+          <h3 class="font-heading font-600 text-xl text-primary mb-3">智能感應洗程</h3>
+          <p class="text-secondary leading-relaxed">ActiveWater™ 感應器自動偵測碗盤髒污程度，調整水量與時間，每次洗滌都是最省水的方案。</p>
+        </article>
+        <article class="group p-8 rounded-3xl border border-gray-100 hover:border-cta/30 hover:shadow-xl transition-all duration-300 cursor-pointer">
+          <div class="w-14 h-14 rounded-2xl bg-cta/10 flex items-center justify-center mb-6 group-hover:bg-cta/20 transition-colors duration-200">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="#CA8A04" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          <h3 class="font-heading font-600 text-xl text-primary mb-3">Home Connect App</h3>
+          <p class="text-secondary leading-relaxed">手機遠端啟動、監控進度、接收完成通知。結合智慧家居系統，隨時掌控廚房狀態。</p>
+        </article>
+        <article class="group p-8 rounded-3xl border border-gray-100 hover:border-cta/30 hover:shadow-xl transition-all duration-300 cursor-pointer">
+          <div class="w-14 h-14 rounded-2xl bg-cta/10 flex items-center justify-center mb-6 group-hover:bg-cta/20 transition-colors duration-200">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="#CA8A04" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h3 class="font-heading font-600 text-xl text-primary mb-3">15 套餐具容量</h3>
+          <p class="text-secondary leading-relaxed">彈性三層籃架設計，可容納鍋具、高腳杯、刀叉等各式餐具，一次搞定全家人的清潔需求。</p>
+        </article>
+        <article class="group p-8 rounded-3xl border border-gray-100 hover:border-cta/30 hover:shadow-xl transition-all duration-300 cursor-pointer">
+          <div class="w-14 h-14 rounded-2xl bg-cta/10 flex items-center justify-center mb-6 group-hover:bg-cta/20 transition-colors duration-200">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="#CA8A04" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8.56 2.75c4.37 6.03 6.02 9.42 8.03 17.72m2.54-15.38c-3.72 4.35-8.94 5.66-16.88 5.85m19.5 1.9c-3.5-.93-6.63-.82-8.94 0-2.58.92-5.01 2.86-7.44 6.32"/></svg>
+          </div>
+          <h3 class="font-heading font-600 text-xl text-primary mb-3">A+++ 能效等級</h3>
+          <p class="text-secondary leading-relaxed">歐盟最高能效認證，年耗電量僅 234 kWh，用水量 9.5L / 次，為地球也為荷包省下可觀成本。</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Specs Comparison -->
+  <section id="specs" class="py-24 px-4 bg-primary text-white">
+    <div class="max-w-5xl mx-auto">
+      <h2 class="font-heading font-700 text-4xl md:text-5xl text-center mb-4">型號比較</h2>
+      <p class="text-stone-400 text-lg text-center max-w-lg mx-auto mb-16">選擇最適合你家庭的 Bosch 洗碗機。</p>
+      <div class="overflow-x-auto rounded-3xl border border-stone-700">
+        <table class="w-full min-w-[560px]" role="table">
+          <caption class="sr-only">Bosch 洗碗機型號規格比較</caption>
+          <thead>
+            <tr class="border-b border-stone-700">
+              <th class="text-left p-5 font-semibold text-stone-400 text-sm" scope="col">規格</th>
+              <th class="text-center p-5 font-heading font-600 text-white" scope="col">Series 4</th>
+              <th class="text-center p-5 font-heading font-600 text-cta bg-cta/10" scope="col">Series 6 <span class="block text-xs text-stone-400 font-normal mt-0.5">推薦</span></th>
+              <th class="text-center p-5 font-heading font-600 text-white" scope="col">Series 8</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-b border-stone-800 hover:bg-stone-800/50 transition-colors duration-150"><td class="p-5 text-stone-300 text-sm">噪音等級</td><td class="p-5 text-center text-sm">46 dB</td><td class="p-5 text-center text-sm bg-cta/5">44 dB</td><td class="p-5 text-center text-sm">42 dB</td></tr>
+            <tr class="border-b border-stone-800 hover:bg-stone-800/50 transition-colors duration-150"><td class="p-5 text-stone-300 text-sm">容量</td><td class="p-5 text-center text-sm">13 套</td><td class="p-5 text-center text-sm bg-cta/5">14 套</td><td class="p-5 text-center text-sm">15 套</td></tr>
+            <tr class="border-b border-stone-800 hover:bg-stone-800/50 transition-colors duration-150"><td class="p-5 text-stone-300 text-sm">能效等級</td><td class="p-5 text-center text-sm">A++</td><td class="p-5 text-center text-sm bg-cta/5">A+++</td><td class="p-5 text-center text-sm">A+++</td></tr>
+            <tr class="border-b border-stone-800 hover:bg-stone-800/50 transition-colors duration-150"><td class="p-5 text-stone-300 text-sm">PerfectDry™</td><td class="p-5 text-center text-sm text-stone-600">—</td><td class="p-5 text-center text-sm bg-cta/5 text-cta">✓</td><td class="p-5 text-center text-sm text-cta">✓</td></tr>
+            <tr class="border-b border-stone-800 hover:bg-stone-800/50 transition-colors duration-150"><td class="p-5 text-stone-300 text-sm">Home Connect</td><td class="p-5 text-center text-sm text-stone-600">—</td><td class="p-5 text-center text-sm bg-cta/5 text-cta">✓</td><td class="p-5 text-center text-sm text-cta">✓</td></tr>
+            <tr class="hover:bg-stone-800/50 transition-colors duration-150"><td class="p-5 text-stone-300 text-sm">售價（建議）</td><td class="p-5 text-center text-sm font-semibold">NT$ 19,900</td><td class="p-5 text-center text-sm font-semibold bg-cta/5 text-cta">NT$ 26,900</td><td class="p-5 text-center text-sm font-semibold">NT$ 36,900</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Reviews -->
+  <section id="reviews" class="py-24 px-4 bg-surface">
+    <div class="max-w-5xl mx-auto">
+      <h2 class="font-heading font-700 text-4xl md:text-5xl text-center text-primary mb-4">真實用戶怎麼說</h2>
+      <p class="text-secondary text-lg text-center max-w-lg mx-auto mb-16">超過 50,000 個台灣家庭的選擇。</p>
+      <div class="grid md:grid-cols-3 gap-6">
+        <blockquote class="glass p-7 rounded-3xl shadow-md">
+          <div class="flex gap-1 mb-4" aria-label="5 顆星評分"><svg width="16" height="16" viewBox="0 0 24 24" fill="#CA8A04" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#CA8A04" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#CA8A04" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#CA8A04" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#CA8A04" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+          <p class="text-secondary leading-relaxed mb-5 text-sm">"靜音效果超乎預期，開著洗碗機在旁邊看電視完全沒問題。PerfectDry 也是真的全乾，不用再拿布擦了。"</p>
+          <footer class="flex items-center gap-3"><div class="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center font-heading font-600 text-primary text-sm" aria-hidden="true">陳</div><div><p class="font-semibold text-sm text-primary">陳小姐</p><p class="text-xs text-stone-400">台北市 · Series 6 用戶</p></div></footer>
+        </blockquote>
+        <blockquote class="glass p-7 rounded-3xl shadow-md">
+          <div class="flex gap-1 mb-4" aria-label="5 顆星評分"><svg width="16" height="16" viewBox="0 0 24 24" fill="#CA8A04" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#CA8A04" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#CA8A04" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#CA8A04" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#CA8A04" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+          <p class="text-secondary leading-relaxed mb-5 text-sm">"Home Connect App 很方便，睡前按一下就出門了。早上回來碗盤全乾。節能效果也很好，電費明顯降低。"</p>
+          <footer class="flex items-center gap-3"><div class="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center font-heading font-600 text-primary text-sm" aria-hidden="true">林</div><div><p class="font-semibold text-sm text-primary">林先生</p><p class="text-xs text-stone-400">新竹市 · Series 8 用戶</p></div></footer>
+        </blockquote>
+        <blockquote class="glass p-7 rounded-3xl shadow-md">
+          <div class="flex gap-1 mb-4" aria-label="5 顆星評分"><svg width="16" height="16" viewBox="0 0 24 24" fill="#CA8A04" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#CA8A04" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#CA8A04" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#CA8A04" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="#CA8A04" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+          <p class="text-secondary leading-relaxed mb-5 text-sm">"德國品質果然不一樣，用了兩年完全沒出過任何問題。售後服務也很好，安裝師傅非常專業。"</p>
+          <footer class="flex items-center gap-3"><div class="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center font-heading font-600 text-primary text-sm" aria-hidden="true">王</div><div><p class="font-semibold text-sm text-primary">王太太</p><p class="text-xs text-stone-400">台中市 · Series 4 用戶</p></div></footer>
+        </blockquote>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section id="buy" class="py-24 px-4 bg-primary">
+    <div class="max-w-3xl mx-auto text-center">
+      <h2 class="font-heading font-700 text-4xl md:text-5xl text-white mb-6">準備好升級你的廚房了嗎？</h2>
+      <p class="text-stone-400 text-lg leading-relaxed max-w-xl mx-auto mb-10">現在購買享有免費安裝服務 + 五年整機保固。限時優惠，額滿為止。</p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="#" class="bg-cta text-white font-semibold px-10 py-4 rounded-2xl hover:bg-yellow-500 transition-colors duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-cta focus:ring-offset-2 focus:ring-offset-primary shadow-lg shadow-cta/30">立即選購</a>
+        <a href="#" class="border border-stone-600 text-stone-300 font-semibold px-10 py-4 rounded-2xl hover:border-stone-400 hover:text-white transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-stone-400 focus:ring-offset-2 focus:ring-offset-primary">預約到府諮詢</a>
+      </div>
+      <p class="text-stone-600 text-sm mt-8">免費運送 · 專業安裝 · 30 天無理由退換</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-primary border-t border-stone-800 py-10 px-4" role="contentinfo">
+    <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-stone-500 text-sm">
+      <p class="font-heading font-700 text-white tracking-widest">BOSCH</p>
+      <p>© 2025 Robert Bosch GmbH. 版權所有。</p>
+      <nav aria-label="頁尾連結"><ul class="flex gap-6" role="list"><li><a href="#" class="hover:text-stone-300 transition-colors duration-200 cursor-pointer">隱私政策</a></li><li><a href="#" class="hover:text-stone-300 transition-colors duration-200 cursor-pointer">使用條款</a></li><li><a href="#" class="hover:text-stone-300 transition-colors duration-200 cursor-pointer">聯絡我們</a></li></ul></nav>
+    </div>
+  </footer>
+
+</body>
+</html>
