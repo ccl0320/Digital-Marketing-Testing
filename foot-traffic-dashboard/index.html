@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-theme="">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Showroom 人流地圖儀表板</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📍</text></svg>" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <h1>Showroom 人流地圖儀表板</h1>
+        <p class="sub">Google Maps Platform · 展示中心周邊 600 m 人流估算與熱力圖</p>
+      </div>
+      <div class="top-actions">
+        <button class="btn" id="themeBtn" title="切換深淺色">🌗 主題</button>
+        <button class="btn" id="keyBtn">🔑 API 金鑰</button>
+      </div>
+    </header>
+
+    <nav class="controls">
+      <div class="tabs" role="tablist" id="locTabs"></div>
+      <div class="seg" id="daySeg">
+        <button data-day="weekday" aria-pressed="true">平日</button>
+        <button data-day="weekend" aria-pressed="false">週末</button>
+      </div>
+      <div class="hour-ctl">
+        <label for="hourSlider">時段 <output id="hourOut">18:00</output></label>
+        <input type="range" id="hourSlider" min="0" max="23" step="1" value="18" />
+        <button class="chip" id="nowBtn" aria-pressed="true">現在</button>
+      </div>
+    </nav>
+
+    <main class="grid">
+      <section class="card map-card">
+        <div class="map-head">
+          <div>
+            <h2 id="locName"></h2>
+            <p class="muted" id="locAddr"></p>
+          </div>
+          <span class="badge" id="srcBadge">模擬資料</span>
+        </div>
+        <div class="map-wrap">
+          <div id="map"></div>
+          <canvas id="demoCanvas"></canvas>
+          <div class="map-notice" id="mapNotice">
+            <span>目前為模擬資料示意圖 — 設定 Google Maps API 金鑰即可載入實際地圖與周邊地點資料。</span>
+            <button class="chip" id="noticeKeyBtn">設定金鑰</button>
+          </div>
+        </div>
+        <div class="map-legend">
+          <span>人流密度</span><span>低</span>
+          <span class="legend-ramp" role="img" aria-label="由淺藍（低）到深藍（高）的密度色階"></span>
+          <span>高</span>
+          <span style="margin-left:auto">分析半徑 600 m</span>
+        </div>
+      </section>
+
+      <aside class="kpis">
+        <div class="tile">
+          <div class="label">目前時段人流指數</div>
+          <div class="value" id="kIndex">–</div>
+          <div class="delta" id="kDelta"></div>
+          <div class="note">0–100，跨兩地共同基準</div>
+        </div>
+        <div class="tile">
+          <div class="label">估計人次／小時</div>
+          <div class="value" id="kPersons">–</div>
+          <div class="note">周邊 600 m 街區活動量（模型估算）</div>
+        </div>
+        <div class="tile">
+          <div class="label">尖峰時段</div>
+          <div class="value" id="kPeak">–</div>
+          <div class="note" id="kPeakNote"></div>
+        </div>
+        <div class="tile">
+          <div class="label">周邊人流熱點</div>
+          <div class="value" id="kPois">–<small> 處</small></div>
+          <div class="note" id="kPoisNote">商場・餐飲・車站・辦公・休閒</div>
+        </div>
+      </aside>
+
+      <section class="card chart-card" id="hourlyCard">
+        <header>
+          <h3>各時段人流指數 — <span id="hourlyLocLabel"></span></h3>
+          <button class="chip" id="hourlyTblBtn" aria-pressed="false">表格</button>
+        </header>
+        <div class="chart-box" id="hourlyChart"></div>
+        <div class="tbl" id="hourlyTable" hidden></div>
+      </section>
+
+      <section class="card chart-card" id="compareCard">
+        <header>
+          <h3>兩地人流曲線比較</h3>
+          <button class="chip" id="compareTblBtn" aria-pressed="false">表格</button>
+        </header>
+        <div class="legend" id="cmpLegend"></div>
+        <div class="chart-box" id="compareChart"></div>
+        <div class="tbl" id="compareTable" hidden></div>
+      </section>
+    </main>
+
+    <footer class="foot">
+      <strong>資料方法說明：</strong>Google Maps Platform 不提供官方即時人流（footfall）API。本儀表板以
+      <strong>Places API (New)</strong> 取得展示中心半徑 600 m 內的地點（商場、餐飲、大眾運輸、辦公、休閒），
+      以「地點類型權重 × 評論規模 × 各類型時段曲線」建立人流指數模型；熱力圖強度為該時段各地點的相對人流貢獻。
+      所有數值皆為<strong>估算值</strong>，適合用於相對比較（時段間、兩地間），非實測人數。
+      未設定 API 金鑰時顯示模擬資料。若需實測人流，可再串接第三方資料源（如 BestTime、電信人流資料）。
+    </footer>
+  </div>
+
+  <dialog id="keyDialog">
+    <h3>Google Maps API 金鑰</h3>
+    <p>金鑰只儲存在你瀏覽器的 localStorage，不會上傳到任何伺服器。</p>
+    <ol>
+      <li>到 <strong>Google Cloud Console</strong> 建立專案並啟用計費</li>
+      <li>啟用 <strong>Maps JavaScript API</strong>、<strong>Places API (New)</strong>、<strong>Geocoding API</strong></li>
+      <li>建立 API 金鑰，並以 HTTP referrer 限制網域</li>
+    </ol>
+    <input type="text" id="keyInput" placeholder="AIza..." autocomplete="off" spellcheck="false" />
+    <div class="dialog-actions">
+      <button class="btn" id="keyClearBtn">清除金鑰</button>
+      <button class="btn" id="keyCancelBtn">取消</button>
+      <button class="btn" id="keySaveBtn" style="background:var(--accent-wash);font-weight:600">儲存並載入</button>
+    </div>
+  </dialog>
+
+  <div class="tooltip" id="tooltip" hidden></div>
+
+  <script src="js/config.js"></script>
+  <script src="js/heatmap.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
