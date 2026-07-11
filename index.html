@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌱 開心小農場</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  :root {
+    --cream: #fdf6e3;
+    --grass: #a8d977;
+    --grass-dark: #8bc34a;
+    --soil: #b98b5e;
+    --soil-dark: #9a6f47;
+    --wood: #c98f5a;
+    --wood-dark: #a9713f;
+    --pink: #ffb7c5;
+    --sky1: #aee7ff;
+    --sky2: #d8f5c8;
+  }
+
+  body {
+    font-family: "Yuanti TC", "YouYuan", "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+    background: linear-gradient(180deg, var(--sky1) 0%, var(--sky2) 60%, var(--grass) 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px;
+    overflow-x: hidden;
+  }
+
+  /* ===== 漂浮雲朵 ===== */
+  .cloud {
+    position: fixed;
+    font-size: 48px;
+    opacity: .8;
+    animation: drift linear infinite;
+    pointer-events: none;
+    z-index: 0;
+  }
+  @keyframes drift {
+    from { transform: translateX(-120px); }
+    to   { transform: translateX(110vw); }
+  }
+
+  .game {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 760px;
+  }
+
+  /* ===== 標題 ===== */
+  h1 {
+    text-align: center;
+    font-size: clamp(28px, 6vw, 42px);
+    color: #5b4224;
+    text-shadow: 2px 3px 0 #ffffffaa;
+    margin-bottom: 12px;
+    letter-spacing: 2px;
+  }
+  h1 .bounce { display: inline-block; animation: bounce 2s ease-in-out infinite; }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px) rotate(-8deg); }
+  }
+
+  /* ===== 狀態列 ===== */
+  .statusbar {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .stat {
+    background: #fffdf5;
+    border: 3px solid var(--wood);
+    border-radius: 999px;
+    padding: 6px 16px;
+    font-size: 17px;
+    font-weight: bold;
+    color: #6b4b2a;
+    box-shadow: 0 3px 0 var(--wood-dark);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .stat .val { color: #e8871e; }
+
+  /* XP 條 */
+  .xpwrap {
+    background: #fffdf5;
+    border: 3px solid var(--wood);
+    border-radius: 999px;
+    box-shadow: 0 3px 0 var(--wood-dark);
+    padding: 4px;
+    width: 160px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .xpwrap .lv { font-weight: bold; color: #6b4b2a; font-size: 15px; padding-left: 8px; white-space: nowrap; }
+  .xpbar { flex: 1; height: 14px; background: #eee2c8; border-radius: 999px; overflow: hidden; }
+  .xpbar > div {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #ffd54f, #ffb300);
+    border-radius: 999px;
+    transition: width .4s ease;
+  }
+
+  /* ===== 商店（種子選擇）===== */
+  .shop {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding: 10px 6px 14px;
+    margin-bottom: 6px;
+    scrollbar-width: thin;
+  }
+  .seed {
+    flex: 0 0 auto;
+    width: 92px;
+    background: #fffdf5;
+    border: 3px solid var(--wood);
+    border-radius: 16px;
+    box-shadow: 0 4px 0 var(--wood-dark);
+    padding: 8px 4px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform .12s ease, box-shadow .12s ease;
+    user-select: none;
+    position: relative;
+  }
+  .seed:hover { transform: translateY(-3px); }
+  .seed.selected {
+    border-color: #ff8fab;
+    background: #fff0f4;
+    box-shadow: 0 4px 0 #d96a88, 0 0 0 3px #ffb7c580;
+  }
+  .seed.locked { filter: grayscale(1); opacity: .55; cursor: not-allowed; }
+  .seed .icon { font-size: 30px; line-height: 1.2; }
+  .seed .name { font-size: 14px; font-weight: bold; color: #5b4224; }
+  .seed .price { font-size: 13px; color: #e8871e; font-weight: bold; }
+  .seed .time { font-size: 11px; color: #8a7a5c; }
+  .seed .lock-tag {
+    position: absolute;
+    top: -8px;
+    right: -6px;
+    background: #9e9e9e;
+    color: #fff;
+    font-size: 10px;
+    border-radius: 999px;
+    padding: 2px 7px;
+  }
+
+  /* ===== 工具列 ===== */
+  .tools {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .tool {
+    background: #fffdf5;
+    border: 3px solid var(--wood);
+    border-radius: 14px;
+    box-shadow: 0 4px 0 var(--wood-dark);
+    padding: 8px 18px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #5b4224;
+    cursor: pointer;
+    transition: transform .12s ease;
+    user-select: none;
+    font-family: inherit;
+  }
+  .tool:hover { transform: translateY(-2px); }
+  .tool:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--wood-dark); }
+  .tool.selected {
+    border-color: #64b5f6;
+    background: #e9f5ff;
+    box-shadow: 0 4px 0 #3d8ecb, 0 0 0 3px #aad8ff80;
+  }
+
+  /* ===== 農田 ===== */
+  .farm {
+    background: var(--grass-dark);
+    border: 6px solid var(--wood);
+    border-radius: 24px;
+    box-shadow: 0 8px 0 var(--wood-dark), 0 14px 30px #00000022;
+    padding: 18px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    background-image:
+      radial-gradient(circle at 20% 30%, #ffffff18 0 8px, transparent 9px),
+      radial-gradient(circle at 80% 70%, #ffffff14 0 10px, transparent 11px),
+      radial-gradient(circle at 60% 15%, #ffffff10 0 6px, transparent 7px);
+  }
+
+  .plot {
+    aspect-ratio: 1;
+    background: linear-gradient(180deg, var(--soil), var(--soil-dark));
+    border-radius: 18px;
+    border: 3px dashed #7d5a3a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    transition: transform .12s ease;
+    overflow: visible;
+    user-select: none;
+  }
+  .plot:hover { transform: scale(1.05); }
+  .plot:active { transform: scale(.95); }
+
+  .plot .crop {
+    font-size: clamp(28px, 7vw, 46px);
+    line-height: 1;
+    filter: drop-shadow(0 3px 2px #00000033);
+    transition: transform .2s ease;
+  }
+  .plot.ready .crop { animation: ready-wiggle 1s ease-in-out infinite; }
+  @keyframes ready-wiggle {
+    0%, 100% { transform: rotate(-6deg) scale(1.05); }
+    50% { transform: rotate(6deg) scale(1.15); }
+  }
+  .plot.ready {
+    border-color: #ffd54f;
+    box-shadow: 0 0 14px #ffd54faa, inset 0 0 10px #ffd54f44;
+  }
+  .plot .hint {
+    position: absolute;
+    bottom: 6px;
+    font-size: 11px;
+    color: #fff;
+    background: #00000055;
+    padding: 1px 8px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .plot .drop {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    font-size: 14px;
+    animation: bounce 1.4s ease-in-out infinite;
+  }
+
+  /* 進度小條 */
+  .growbar {
+    position: absolute;
+    top: 6px;
+    left: 10px;
+    right: 10px;
+    height: 7px;
+    background: #00000040;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .growbar > div {
+    height: 100%;
+    background: linear-gradient(90deg, #aed581, #7cb342);
+    border-radius: 999px;
+    transition: width .5s linear;
+  }
+
+  /* 鎖住的地 */
+  .plot.locked-plot {
+    background: linear-gradient(180deg, #a0a0a0, #7d7d7d);
+    border-color: #666;
+  }
+  .plot.locked-plot .crop { font-size: 30px; }
+
+  /* ===== 飄浮文字 ===== */
+  .float-text {
+    position: fixed;
+    font-size: 20px;
+    font-weight: bold;
+    pointer-events: none;
+    z-index: 99;
+    animation: float-up 1s ease-out forwards;
+    text-shadow: 0 2px 0 #ffffffcc;
+  }
+  @keyframes float-up {
+    from { opacity: 1; transform: translateY(0) scale(1); }
+    to   { opacity: 0; transform: translateY(-60px) scale(1.3); }
+  }
+
+  /* ===== 訊息吐司 ===== */
+  .toast {
+    position: fixed;
+    left: 50%;
+    bottom: 26px;
+    transform: translateX(-50%) translateY(80px);
+    background: #5b4224ee;
+    color: #fff;
+    padding: 10px 22px;
+    border-radius: 999px;
+    font-size: 15px;
+    z-index: 100;
+    transition: transform .3s ease;
+    pointer-events: none;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ===== 頁尾 ===== */
+  .footer {
+    text-align: center;
+    margin-top: 14px;
+    color: #6b4b2a;
+    font-size: 13px;
+    opacity: .8;
+  }
+  .footer button {
+    background: none;
+    border: none;
+    color: #6b4b2a;
+    text-decoration: underline;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13px;
+  }
+
+  @media (max-width: 480px) {
+    .farm { gap: 10px; padding: 12px; }
+    .stat { font-size: 14px; padding: 5px 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cloud" style="top:6%;  animation-duration:55s;">☁️</div>
+<div class="cloud" style="top:14%; animation-duration:75s; animation-delay:-30s; font-size:36px;">☁️</div>
+<div class="cloud" style="top:3%;  animation-duration:95s; animation-delay:-60s; font-size:56px;">⛅</div>
+
+<div class="game">
+  <h1><span class="bounce">🐰</span> 開心小農場 <span class="bounce" style="animation-delay:.4s">🌻</span></h1>
+
+  <div class="statusbar">
+    <div class="stat">🪙 金幣 <span class="val" id="coins">50</span></div>
+    <div class="xpwrap">
+      <span class="lv">Lv.<span id="level">1</span></span>
+      <div class="xpbar"><div id="xpfill"></div></div>
+    </div>
+    <div class="stat">🌾 收成 <span class="val" id="harvests">0</span></div>
+  </div>
+
+  <div class="shop" id="shop"></div>
+
+  <div class="tools">
+    <button class="tool" id="waterTool" title="澆水讓作物長快一點！">💧 澆水</button>
+    <button class="tool" id="shovelTool" title="剷除不想要的作物">🪓 剷除</button>
+  </div>
+
+  <div class="farm" id="farm"></div>
+
+  <div class="footer">
+    種下種子 → 等待長大（可以澆水加速）→ 點擊發光的作物收成！
+    <br>進度會自動儲存 · <button id="resetBtn">重新開始</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+  // ===== 作物設定 =====
+  const CROPS = [
+    { id:'carrot',    name:'蘿蔔',   icon:'🥕', cost:5,   sell:12,   time:15,  xp:5,   unlock:1 },
+    { id:'tomato',    name:'番茄',   icon:'🍅', cost:12,  sell:30,   time:30,  xp:10,  unlock:2 },
+    { id:'corn',      name:'玉米',   icon:'🌽', cost:25,  sell:65,   time:60,  xp:20,  unlock:3 },
+    { id:'strawberry',name:'草莓',   icon:'🍓', cost:50,  sell:140,  time:120, xp:40,  unlock:4 },
+    { id:'eggplant',  name:'茄子',   icon:'🍆', cost:100, sell:290,  time:240, xp:80,  unlock:5 },
+    { id:'pumpkin',   name:'南瓜',   icon:'🎃', cost:200, sell:620,  time:480, xp:160, unlock:6 },
+    { id:'sunflower', name:'向日葵', icon:'🌻', cost:400, sell:1300, time:900, xp:320, unlock:7 },
+  ];
+  const STAGES = ['🌱','🌿']; // 種子期、成長期（成熟顯示作物本身）
+  const TOTAL_PLOTS = 12;
+  const START_PLOTS = 6;
+  const SAVE_KEY = 'happy-farm-save-v1';
+
+  // ===== 遊戲狀態 =====
+  let state = {
+    coins: 50,
+    xp: 0,
+    level: 1,
+    harvests: 0,
+    unlockedPlots: START_PLOTS,
+    plots: Array.from({length: TOTAL_PLOTS}, () => null),
+    // plot: { cropId, plantedAt(秒), watered(加速的秒數) }
+  };
+  let selectedSeed = 'carrot';
+  let selectedTool = null; // 'water' | 'shovel' | null
+
+  const now = () => Math.floor(Date.now() / 1000);
+  const xpNeed = lv => lv * 50;
+  const plotPrice = n => Math.floor(50 * Math.pow(2, n - START_PLOTS)); // 第7塊地50、之後翻倍
+
+  // ===== 存檔 =====
+  function save() {
+    try { localStorage.setItem(SAVE_KEY, JSON.stringify(state)); } catch (e) {}
+  }
+  function load() {
+    try {
+      const raw = localStorage.getItem(SAVE_KEY);
+      if (raw) {
+        const s = JSON.parse(raw);
+        if (s && Array.isArray(s.plots)) state = Object.assign(state, s);
+      }
+    } catch (e) {}
+  }
+
+  // ===== DOM =====
+  const $ = id => document.getElementById(id);
+  const farmEl = $('farm'), shopEl = $('shop'), toastEl = $('toast');
+
+  function toast(msg) {
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(toast._t);
+    toast._t = setTimeout(() => toastEl.classList.remove('show'), 1800);
+  }
+
+  function floatText(x, y, text, color) {
+    const el = document.createElement('div');
+    el.className = 'float-text';
+    el.textContent = text;
+    el.style.left = (x - 20) + 'px';
+    el.style.top = (y - 20) + 'px';
+    el.style.color = color || '#e8871e';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 1000);
+  }
+
+  function fmtTime(s) {
+    if (s < 60) return s + '秒';
+    const m = Math.floor(s / 60), r = s % 60;
+    return r ? `${m}分${r}秒` : `${m}分`;
+  }
+
+  // ===== 商店 =====
+  function buildShop() {
+    shopEl.innerHTML = '';
+    for (const c of CROPS) {
+      const locked = state.level < c.unlock;
+      const el = document.createElement('div');
+      el.className = 'seed' + (locked ? ' locked' : '') + (selectedSeed === c.id && !locked ? ' selected' : '');
+      el.innerHTML = `
+        <div class="icon">${c.icon}</div>
+        <div class="name">${c.name}</div>
+        <div class="price">🪙${c.cost} → ${c.sell}</div>
+        <div class="time">⏱ ${fmtTime(c.time)}</div>
+        ${locked ? `<div class="lock-tag">Lv.${c.unlock}</div>` : ''}`;
+      el.addEventListener('click', () => {
+        if (locked) { toast(`🔒 ${c.name} 需要等級 Lv.${c.unlock} 解鎖`); return; }
+        selectedSeed = c.id;
+        selectedTool = null;
+        render();
+      });
+      shopEl.appendChild(el);
+    }
+  }
+
+  // ===== 農田 =====
+  function cropOf(p) { return CROPS.find(c => c.id === p.cropId); }
+  function progressOf(p) {
+    const c = cropOf(p);
+    const elapsed = now() - p.plantedAt + (p.watered || 0);
+    return Math.min(1, elapsed / c.time);
+  }
+
+  function buildFarm() {
+    farmEl.innerHTML = '';
+    for (let i = 0; i < TOTAL_PLOTS; i++) {
+      const el = document.createElement('div');
+      el.className = 'plot';
+      el.dataset.index = i;
+      el.addEventListener('click', ev => onPlotClick(i, ev));
+      farmEl.appendChild(el);
+    }
+  }
+
+  function renderFarm() {
+    const t = now();
+    [...farmEl.children].forEach((el, i) => {
+      const p = state.plots[i];
+      el.className = 'plot';
+      if (i >= state.unlockedPlots) {
+        el.classList.add('locked-plot');
+        el.innerHTML = `<div class="crop">🔒</div><div class="hint">🪙${plotPrice(i)} 開墾</div>`;
+        return;
+      }
+      if (!p) {
+        el.innerHTML = `<div class="hint">點我種植 🌱</div>`;
+        return;
+      }
+      const c = cropOf(p);
+      const prog = progressOf(p);
+      if (prog >= 1) {
+        el.classList.add('ready');
+        el.innerHTML = `<div class="crop">${c.icon}</div><div class="hint">點擊收成！</div><div class="drop">✨</div>`;
+      } else {
+        const icon = prog < 0.5 ? STAGES[0] : STAGES[1];
+        const remain = Math.ceil(c.time * (1 - prog));
+        el.innerHTML = `
+          <div class="growbar"><div style="width:${Math.floor(prog*100)}%"></div></div>
+          <div class="crop">${icon}</div>
+          <div class="hint">${c.icon} ${fmtTime(remain)}</div>`;
+      }
+    });
+  }
+
+  // ===== 狀態列 =====
+  function renderStatus() {
+    $('coins').textContent = state.coins;
+    $('level').textContent = state.level;
+    $('harvests').textContent = state.harvests;
+    $('xpfill').style.width = Math.floor(100 * state.xp / xpNeed(state.level)) + '%';
+    $('waterTool').classList.toggle('selected', selectedTool === 'water');
+    $('shovelTool').classList.toggle('selected', selectedTool === 'shovel');
+  }
+
+  function gainXp(amount) {
+    state.xp += amount;
+    while (state.xp >= xpNeed(state.level)) {
+      state.xp -= xpNeed(state.level);
+      state.level++;
+      toast(`🎉 升級了！現在是 Lv.${state.level}，看看商店有沒有新種子！`);
+    }
+  }
+
+  // ===== 互動 =====
+  function onPlotClick(i, ev) {
+    const x = ev.clientX, y = ev.clientY;
+
+    // 開墾新地
+    if (i >= state.unlockedPlots) {
+      if (i !== state.unlockedPlots) { toast('要照順序開墾唷！'); return; }
+      const price = plotPrice(i);
+      if (state.coins < price) { toast(`金幣不夠，開墾需要 🪙${price}`); return; }
+      state.coins -= price;
+      state.unlockedPlots++;
+      floatText(x, y, `-${price} 🪙`, '#d9534f');
+      toast('🎊 開墾了一塊新田地！');
+      render(); save();
+      return;
+    }
+
+    const p = state.plots[i];
+
+    // 剷除
+    if (selectedTool === 'shovel') {
+      if (!p) { toast('這裡沒有東西可以剷～'); return; }
+      state.plots[i] = null;
+      floatText(x, y, '🪓', '#795548');
+      render(); save();
+      return;
+    }
+
+    // 澆水
+    if (selectedTool === 'water') {
+      if (!p) { toast('先種點東西再澆水吧！'); return; }
+      if (progressOf(p) >= 1) { toast('它已經熟了，快收成吧！'); return; }
+      const c = cropOf(p);
+      const boost = Math.max(5, Math.floor(c.time * 0.15)); // 每次加速 15%
+      p.watered = (p.watered || 0) + boost;
+      floatText(x, y, '💧 -' + fmtTime(boost), '#3d8ecb');
+      render(); save();
+      return;
+    }
+
+    // 收成
+    if (p && progressOf(p) >= 1) {
+      const c = cropOf(p);
+      state.plots[i] = null;
+      state.coins += c.sell;
+      state.harvests++;
+      gainXp(c.xp);
+      floatText(x, y, `+${c.sell} 🪙`, '#e8871e');
+      floatText(x + 30, y - 24, `+${c.xp} XP`, '#7cb342');
+      render(); save();
+      return;
+    }
+
+    // 已種植但未成熟
+    if (p) {
+      const remain = Math.ceil(cropOf(p).time * (1 - progressOf(p)));
+      toast(`${cropOf(p).icon} 還要 ${fmtTime(remain)}，可以用 💧澆水 加速～`);
+      return;
+    }
+
+    // 種植
+    const c = CROPS.find(c => c.id === selectedSeed);
+    if (state.level < c.unlock) { toast(`🔒 ${c.name} 還沒解鎖`); return; }
+    if (state.coins < c.cost) { toast(`金幣不夠！${c.name} 種子要 🪙${c.cost}`); return; }
+    state.coins -= c.cost;
+    state.plots[i] = { cropId: c.id, plantedAt: now(), watered: 0 };
+    floatText(x, y, `-${c.cost} 🪙`, '#d9534f');
+    render(); save();
+  }
+
+  // 工具切換
+  $('waterTool').addEventListener('click', () => {
+    selectedTool = selectedTool === 'water' ? null : 'water';
+    render();
+  });
+  $('shovelTool').addEventListener('click', () => {
+    selectedTool = selectedTool === 'shovel' ? null : 'shovel';
+    render();
+  });
+
+  $('resetBtn').addEventListener('click', () => {
+    if (!confirm('確定要清空農場、重新開始嗎？')) return;
+    localStorage.removeItem(SAVE_KEY);
+    location.reload();
+  });
+
+  function render() {
+    buildShop();
+    renderFarm();
+    renderStatus();
+  }
+
+  // ===== 啟動 =====
+  load();
+  buildFarm();
+  render();
+  setInterval(renderFarm, 1000); // 每秒更新生長進度
+  setInterval(save, 10000);
+})();
+</script>
+</body>
+</html>
